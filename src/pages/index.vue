@@ -1,3 +1,6 @@
 <template>
-  <h1>Hello Nuxt</h1>
+  <section>
+    <h1>Editable table</h1>
+    <EditableTable />
+  </section>
 </template>
