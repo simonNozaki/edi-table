@@ -6,6 +6,6 @@
 
 <style scoped>
 .cell {
-  @apply w-24 h-max border;
+  @apply w-full border p-1;
 }
 </style>
