@@ -61,13 +61,34 @@ const onSelectTaxRate = (id: number, e: { id: number, value: string }) => {
     payment.taxRate = e
   }
 };
+
+const onClickAddLine = () => {
+  const maxId = payments.value
+    .map((p) => p.id)
+    .sort((lhs, rhs) => lhs > rhs ? 1 : -1)
+    .at(0) ?? 0
+  payments.value.push({
+    id: maxId,
+    amount: 0,
+    items: [],
+    taxRate: { id: 0, value: '' },
+    payedAt: new Date().toDateString()
+  })
+};
+
+const getItemNames = (payment: Payments): string => {
+  return payment.items.length > 0 ? payment.items.reduce((lhs, rhs) => `${lhs}, ${rhs}`) : ''
+};
 </script>
 
 <template>
   <div>
-    <Button>行を追加 +</Button>
+    <Button @click="onClickAddLine">行を追加 +</Button>
     <div class="w-full">
-      <div class="grid grid-cols-5">
+      <div class="grid grid-cols-6">
+        <div>
+          <span>行を消すボタン追加する</span>
+        </div>
         <EditableHeaderCell>#</EditableHeaderCell>
         <EditableHeaderCell>支払金額</EditableHeaderCell>
         <EditableHeaderCell>商品名</EditableHeaderCell>
@@ -75,13 +96,16 @@ const onSelectTaxRate = (id: number, e: { id: number, value: string }) => {
         <EditableHeaderCell>支払日</EditableHeaderCell>
       </div>
       <!--親要素いっぱいに-->
-      <div class="grid grid-cols-5" v-for="(payment, i) in payments" :key="i">
+      <div class="grid grid-cols-6 table-row" v-for="(payment, i) in payments" :key="i">
+        <div>
+          <!-- 行を消すボタン -->
+        </div>
         <EditableCell>{{ i }}</EditableCell>
         <EditableCell>
           <NumberInput :model-value="payment.amount" />
         </EditableCell>
         <EditableCell>
-          <TextInput :model-value="payment.items.reduce((lhs, rhs) => `${lhs}, ${rhs}`)" />
+          <TextInput :model-value="getItemNames(payment)" />
         </EditableCell>
         <EditableCell>
           <Select :options="taxRates" @select="onSelectTaxRate(payment.id, $event)" />
@@ -93,3 +117,10 @@ const onSelectTaxRate = (id: number, e: { id: number, value: string }) => {
     </div>
   </div>
 </template>
+
+<style>
+/* 行はホバーで位置を明示する: https://m2.material.io/components/data-tables#anatomy */
+.table-row {
+  @apply hover:bg-gray-100;
+}
+</style>
