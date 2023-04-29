@@ -1,6 +1,6 @@
 {
-  "name": "nuxt-app",
-  "private": true,
+  "name": "edi-table",
+  "description": "Trial of editable table with css",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
