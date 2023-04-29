@@ -41,6 +41,6 @@ select, option {
 }
 
 select {
-  @apply bg-gray-100 rounded h-full w-full hover:shadow;
+  @apply rounded border border-gray-300 h-full w-full hover:shadow;
 }
 </style>
