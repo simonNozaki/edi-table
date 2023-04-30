@@ -14,6 +14,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 <style scoped>
 input {
-  @apply p-1 w-full rounded border border-gray-300 hover:shadow;
+  @apply px-3 py-2 w-full rounded border border-gray-300 hover:shadow;
 }
 </style>

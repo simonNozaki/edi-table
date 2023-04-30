@@ -24,10 +24,10 @@ button {
 }
 
 .primary {
-  @apply bg-teal-600 text-white font-semibold
+  @apply bg-teal-600 text-white font-semibold hover:bg-teal-700;
 }
 
 .secondary {
-  @apply bg-gray-300;
+  @apply bg-gray-300 hover:bg-gray-400;
 }
 </style>
