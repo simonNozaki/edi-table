@@ -1,44 +1,12 @@
 <script setup lang="ts">
-import Button from './Button.vue';
+import Button from './atoms/Button.vue';
 import EditableCell from './EditableCell.vue';
-import NumberInput from './NumberInput.vue';
-import TextInput from './TextInput.vue';
-import Select from './Select.vue';
+import NumberInput from './atoms/NumberInput.vue';
+import TextInput from './atoms/TextInput.vue';
+import Select from './atoms/Select.vue';
 import EditableHeaderCell from './EditableHeaderCell.vue';
-import { ref, type Ref } from 'vue';
-
-interface Payments {
-  id: number,
-  amount: number,
-  items: string[],
-  // TODO: 汎用的な型にする
-  taxRate: { id: number, value: string },
-  payedAt: string
-}
-
-const payments: Ref<Payments[]> = ref([
-  {
-    id: 1,
-    amount: 1000,
-    items: ['商品1'],
-    taxRate: { id: 0, value: '' },
-    payedAt: '2023-04-27'
-  },
-  {
-    id: 2,
-    amount: 5000,
-    items: ['商品1', '商品2'],
-    taxRate: { id: 0, value: '' },
-    payedAt: '2023-04-27'
-  },
-  {
-    id: 3,
-    amount: 500,
-    items: ['商品3'],
-    taxRate: { id: 0, value: '' },
-    payedAt: '2023-04-27'
-  }
-])
+import { usePayments, Payment } from '@/composables/usePayments';
+const { payments } = usePayments()
 
 const taxRates: { id: number, value: string }[] = [
   {
@@ -76,7 +44,7 @@ const onClickAddLine = () => {
   })
 };
 
-const getItemNames = (payment: Payments): string => {
+const getItemNames = (payment: Payment): string => {
   return payment.items.length > 0 ? payment.items.reduce((lhs, rhs) => `${lhs}, ${rhs}`) : ''
 };
 </script>
@@ -85,10 +53,8 @@ const getItemNames = (payment: Payments): string => {
   <div>
     <Button @click="onClickAddLine">行を追加 +</Button>
     <div class="w-full">
-      <div class="grid grid-cols-6">
-        <div>
-          <span>行を消すボタン追加する</span>
-        </div>
+      <div class="grid table-row">
+        <div></div>
         <EditableHeaderCell>#</EditableHeaderCell>
         <EditableHeaderCell>支払金額</EditableHeaderCell>
         <EditableHeaderCell>商品名</EditableHeaderCell>
@@ -96,9 +62,9 @@ const getItemNames = (payment: Payments): string => {
         <EditableHeaderCell>支払日</EditableHeaderCell>
       </div>
       <!--親要素いっぱいに-->
-      <div class="grid grid-cols-6 table-row" v-for="(payment, i) in payments" :key="i">
-        <div>
-          <!-- 行を消すボタン -->
+      <div class="grid table-row" v-for="(payment, i) in payments" :key="i">
+        <div class="m-auto">
+          <Button order="secondary">-</Button>
         </div>
         <EditableCell>{{ i }}</EditableCell>
         <EditableCell>
@@ -122,5 +88,6 @@ const getItemNames = (payment: Payments): string => {
 /* 行はホバーで位置を明示する: https://m2.material.io/components/data-tables#anatomy */
 .table-row {
   @apply hover:bg-gray-100;
+  grid-template-columns: 52px 52px repeat(4, minmax(0, 1fr));
 }
 </style>
