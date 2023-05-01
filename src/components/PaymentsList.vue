@@ -4,8 +4,12 @@ import Button from './atoms/Button.vue';
 import SideSheet from '@/components/SideSheet.vue';
 import TextInput from './atoms/TextInput.vue';
 import NumberInput from './atoms/NumberInput.vue';
-import { Payment, usePayments } from '~/composables/usePayments';
+import Select from './atoms/Select.vue';
+import InputLabel from './atoms/InputLabel.vue';
+import { Payment, usePayments } from '@/composables/usePayments';
+import { useTaxRates } from '@/composables/useTaxRates';
 const { getItemNamesById, payments } = usePayments()
+const { taxRates } = useTaxRates()
 
 interface Props {
   values: Payment[]
@@ -37,14 +41,24 @@ const selectedPayment = ref<Payment>()
   <div>
     <SideSheet v-if="isOpenSideSheet">
       <div class="p-3">
-        <div class="float-right">
+        <div class="">
           <Button order="secondary" @click="closeSideSheet">閉じる</Button>
         </div>
-        <div>
-          <TextInput :model-value="getItemNamesById(selectedPayment?.id ?? 0)" />
-          <NumberInput :model-value="selectedPayment?.amount ?? 0" />
-          <Select :options="taxRates" @select="onSelectTaxRate(selectedPayment?.id ?? 0, $event)" />
+        <div class="m-5 grid grid-rows-3 gap-5">
+          <div>
+            <InputLabel id="item-names">商品名</InputLabel>
+            <TextInput :model-value="getItemNamesById(selectedPayment?.id ?? 0)" id="item-names" />
+          </div>
+          <div>
+            <InputLabel id="amount">支払金額</InputLabel>
+            <NumberInput :model-value="selectedPayment?.amount ?? 0" id="amount" />
+          </div>
+          <div>
+            <InputLabel id="tax-rate">適用税率</InputLabel>
+            <Select :options="taxRates" @select="onSelectTaxRate(selectedPayment?.id ?? 0, $event)" id="tax-rate" />
+          </div>
         </div>
+        <Button>更新する</Button>
       </div>
     </SideSheet>
     <div v-for="payment in props.values" :key="payment.id">
