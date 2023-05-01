@@ -36,10 +36,6 @@ const onChange = (e: any) => {
 </template>
 
 <style scoped>
-select, option {
-  @apply w-full;
-}
-
 select {
   @apply rounded border border-gray-300 h-full w-full hover:shadow;
 }
