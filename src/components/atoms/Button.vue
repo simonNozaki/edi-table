@@ -1,14 +1,17 @@
 <script setup lang="ts">
 interface Props {
   order?: string;
+  size?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  order: 'primary'
+  order: 'primary',
+  size: 'medium'
 })
 
 const classes = {
-  [props.order]: true
+  [props.order]: true,
+  [props.size]: true
 }
 </script>
 
@@ -20,14 +23,22 @@ const classes = {
 
 <style scoped>
 button {
-  @apply px-2 py-1 rounded;
+  @apply rounded;
 }
 
 .primary {
-  @apply bg-teal-600 text-white font-semibold hover:bg-teal-700;
+  @apply bg-yellow-400 text-blue-950 font-semibold hover:bg-yellow-500;
 }
 
 .secondary {
   @apply bg-gray-300 hover:bg-gray-400;
+}
+
+.medium {
+  @apply px-3 py-2;
+}
+
+.small {
+  @apply px-2 py-1;
 }
 </style>

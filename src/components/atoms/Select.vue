@@ -37,6 +37,6 @@ const onChange = (e: any) => {
 
 <style scoped>
 select {
-  @apply rounded border border-gray-300 h-full w-full hover:shadow;
+  @apply px-3 py-2 rounded border border-gray-300 h-full w-full hover:shadow;
 }
 </style>
