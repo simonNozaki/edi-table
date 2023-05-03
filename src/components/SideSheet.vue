@@ -9,7 +9,7 @@
 
 <style scoped lang="css">
 .sheet {
-  @apply w-1/2 h-full bg-white absolute top-0 right-0 z-50;
+  @apply w-1/2 h-full overflow-y-scroll bg-white absolute top-0 right-0 z-50;
 }
 
 .sheet-background {

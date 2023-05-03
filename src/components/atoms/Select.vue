@@ -28,7 +28,6 @@ const onChange = (e: any) => {
 
 <template>
   <select @change="onChange">
-    <option :value="null"></option>
     <option v-for="option in props.options" :key="option.id">
       {{ option.value }}
     </option>
