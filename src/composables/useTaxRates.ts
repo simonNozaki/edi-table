@@ -1,4 +1,10 @@
-const taxRates: { id: number, value: string }[] = [
+export interface TaxRate {
+  id :number,
+  value: string,
+  description?: string
+}
+
+const taxRates: TaxRate[] = [
   {
     id: 1,
     value: '10%'
@@ -13,8 +19,11 @@ const taxRates: { id: number, value: string }[] = [
   }
 ]
 
+const defaultTaxRate = taxRates[0]
+
 export const useTaxRates = () => {
   return {
-    taxRates: taxRates
+    taxRates: taxRates,
+    defaultTaxRate: defaultTaxRate
   }
 }
