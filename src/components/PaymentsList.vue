@@ -2,6 +2,7 @@
 import Card from './atoms/Card.vue';
 import Button from './atoms/Button.vue';
 import PaymentEditSideSheet from './PaymentEditSideSheet.vue';
+import PaymentCreateSideSheet from './PaymentCreateSideSheet.vue';
 import CalendarCheck from 'vue-material-design-icons/CalendarCheck.vue';
 import { Payment, usePayments } from '@/composables/usePayments';
 const { payments } = usePayments()
@@ -28,6 +29,7 @@ const selectedPayment = ref<Payment>(payments.value[0])
 <template>
   <div>
     <PaymentEditSideSheet :payment="selectedPayment" v-if="isOpenSideSheet" @close="closeSideSheet" />
+    <PaymentCreateSideSheet v-if="isOpenSideSheet" @close="closeSideSheet" />
     <Button @click="openSideSheet">行を追加する</Button>
     <div v-for="payment in props.values" :key="payment.id">
       <Card clickable @click="openSideSheet(payment)" class="my-2">
