@@ -8,12 +8,12 @@ import EditableHeaderCell from './EditableHeaderCell.vue';
 import { usePayments } from '@/composables/usePayments';
 import { useTaxRates } from '@/composables/useTaxRates';
 const { payments } = usePayments()
-const { taxRates } = useTaxRates()
+const { taxRates, getTaxRateOrDefault } = useTaxRates()
 
-const onSelectTaxRate = (id: number, e: { id: number, value: string }) => {
-  const payment = payments.value[0].paymentItems.filter((p) => p.id === id).at(0)
-  if (payment) {
-    payment.taxRate = e
+const onSelectTaxRate = (id: number, e: any) => {
+  const item = payments.value[0].paymentItems.filter((item) => item.id === id).at(0)
+  if (item) {
+    item.taxRate = getTaxRateOrDefault(Number.parseInt(e.target.value));
   }
 };
 
