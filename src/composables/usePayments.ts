@@ -1,6 +1,6 @@
 import { ref, type Ref } from 'vue';
 import { useTaxRates, TaxRate } from '@/composables/useTaxRates';
-const { defaultTaxRate } = useTaxRates()
+const { defaultTaxRate, getTaxRatePercentile } = useTaxRates()
 
 export interface Payment {
   id: number,
@@ -34,7 +34,7 @@ const payments: Ref<Payment[]> = ref([
         id: 2,
         amount: 1000,
         quantity: 1,
-        total: 1,
+        total: 1000,
         items: '商品1',
         taxRate: defaultTaxRate,
         payedAt: '2023-04-27'
@@ -80,8 +80,23 @@ const payments: Ref<Payment[]> = ref([
   }
 ])
 
+const getMaxPaymentId = (): number => {
+  const maxPaymentId = payments.value.map((p) => p.id).sort((lhs, rhs) => lhs > rhs ? -1 : 1).at(0)
+  if (maxPaymentId) {
+    return maxPaymentId + 1;
+  } else {
+    return 1;
+  }
+};
+
+const calculateCurrentTotal = (paymentItem: PaymentItem): number => {
+  return paymentItem.amount * paymentItem.quantity * (1 + getTaxRatePercentile(paymentItem.taxRate.id) / 100);
+};
+
 export const usePayments = () => {
   return {
-    payments: payments
+    payments,
+    getMaxPaymentId,
+    calculateCurrentTotal
   }
 };
