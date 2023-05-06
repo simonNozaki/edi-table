@@ -3,9 +3,10 @@ import Card from './atoms/Card.vue';
 import Button from './atoms/Button.vue';
 import PaymentEditSideSheet from './PaymentEditSideSheet.vue';
 import PaymentCreateSideSheet from './PaymentCreateSideSheet.vue';
+import Chip from './atoms/Chip.vue';
 import CalendarCheck from 'vue-material-design-icons/CalendarCheck.vue';
 import { Payment, usePayments } from '@/composables/usePayments';
-const { payments } = usePayments()
+const { payments, calculateCurrentTotal } = usePayments()
 
 interface Props {
   values: Payment[]
@@ -13,26 +14,34 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const openSideSheet = (payment: Payment) => {
-  isOpenSideSheet.value = true
+const openEditSideSheet = (payment: Payment) => {
+  closeSideSheet()
   selectedPayment.value = payment
+  isOpenEditSideSheet.value = true
+}
+
+const openCreateSideSheet = () => {
+  closeSideSheet()
+  isOpenCreateSideSheet.value = true
 }
 
 const closeSideSheet = () => {
-  isOpenSideSheet.value = false
+  isOpenEditSideSheet.value = false
+  isOpenCreateSideSheet.value = false
 }
 
-const isOpenSideSheet = ref(false)
+const isOpenEditSideSheet = ref(false)
+const isOpenCreateSideSheet = ref(false)
 const selectedPayment = ref<Payment>(payments.value[0])
 </script>
 
 <template>
   <div>
-    <PaymentEditSideSheet :payment="selectedPayment" v-if="isOpenSideSheet" @close="closeSideSheet" />
-    <PaymentCreateSideSheet v-if="isOpenSideSheet" @close="closeSideSheet" />
-    <Button @click="openSideSheet">行を追加する</Button>
+    <PaymentEditSideSheet :payment="selectedPayment" v-if="isOpenEditSideSheet" @close="closeSideSheet" />
+    <PaymentCreateSideSheet v-if="isOpenCreateSideSheet" @close="closeSideSheet" />
+    <Button @click="openCreateSideSheet">行を追加する</Button>
     <div v-for="payment in props.values" :key="payment.id">
-      <Card clickable @click="openSideSheet(payment)" class="my-2">
+      <Card clickable @click="openEditSideSheet(payment)" class="my-2">
         <div class="grid card-grid">
           <div>
             <h3 class="card-title">
@@ -43,12 +52,24 @@ const selectedPayment = ref<Payment>(payments.value[0])
           <div>
             <Card v-for="paymentItem in payment.paymentItems" :key="paymentItem.id">
               <div class="ml-2">
-                <p>{{ paymentItem.items }}</p>
-                <p class="text-sm">¥ {{ paymentItem.amount }} × {{ paymentItem.quantity }}個</p>
-                <div>
-                  <p class="text-sm">税 {{ paymentItem.taxRate.value }}</p>
+                <p>
+                  {{ paymentItem.items }} ¥{{ calculateCurrentTotal(paymentItem) }}
+                </p>
+                <p class="text-sm my-1">
+                  ¥ {{ paymentItem.amount }} × 数量 {{ paymentItem.quantity }}
+                </p>
+                <div class="flex flex-row my-1">
+                  <p class="text-sm mr-2">
+                    <Chip>税率</Chip>
+                    <span class="ml-1">
+                      {{ paymentItem.taxRate.value }}
+                    </span>
+                  </p>
                   <p class="text-sm">
-                    <CalendarCheck class="inline-block" /> {{ paymentItem.payedAt }}
+                    <CalendarCheck class="inline-block" />
+                    <span class="ml-1">
+                      {{ paymentItem.payedAt }}
+                    </span>
                   </p>
                 </div>
               </div>

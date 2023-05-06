@@ -7,11 +7,12 @@ import NumberInput from './atoms/NumberInput.vue';
 import Select from './atoms/Select.vue';
 import InputLabel from './atoms/InputLabel.vue';
 import Minus from 'vue-material-design-icons/Minus.vue'
-import { PaymentItem } from '@/composables/usePayments';
+import { PaymentItem, usePayments } from '@/composables/usePayments';
 import { useSnackBar } from '@/composables/useSnackBar';
 import { useTaxRates } from '@/composables/useTaxRates';
-const { taxRates, defaultTaxRate } = useTaxRates()
+const { taxRates, defaultTaxRate, getTaxRatePercentile, getTaxRateOrDefault } = useTaxRates()
 const { snackbar } = useSnackBar()
+const { payments, getMaxPaymentId, calculateCurrentTotal } = usePayments()
 
 interface Emits {
   (e: 'close'): void
@@ -25,7 +26,15 @@ const close = () => {
 }
 
 const savePaymentItems = () => {
-  // TODO: Paymentインスタンスをemitする
+  newPaymentItems.value.forEach((item) => {
+    const taxRate = getTaxRatePercentile(item.taxRate.id) / 100
+    item.total = item.amount * item.quantity * (1 + taxRate);
+  });
+
+  payments.value.push({
+    id: getMaxPaymentId(),
+    paymentItems: newPaymentItems.value
+  });
 
   snackbar.push({ message: '明細を更新しました', type: 'success' })
   close()
@@ -64,6 +73,13 @@ const deletePaymentItem = (id :number) => {
     newPaymentItems.value = items
   }
 }
+
+const onSelectTaxRate = (id: number, e: any) => {
+  const item = newPaymentItems.value.filter((item) => item.id === id).at(0)
+  if (item) {
+    item.taxRate = getTaxRateOrDefault(Number.parseInt(e.target.value));
+  }
+};
 </script>
 
 <template>
@@ -87,17 +103,26 @@ const deletePaymentItem = (id :number) => {
             <Minus />
           </Button>
         </div>
-        <div class="my-3">
+        <div class="my-2">
           <InputLabel id="item-names">商品名</InputLabel>
           <TextInput v-model="paymentItem.items" id="item-names" />
         </div>
-        <div class="my-3">
-          <InputLabel id="amount">支払金額</InputLabel>
+        <div class="my-2">
+          <InputLabel id="amount">単価</InputLabel>
           <NumberInput v-model="paymentItem.amount" id="amount" />
         </div>
-        <div class="my-3">
+        <div class="my-2">
+          <InputLabel id="quantity">数量</InputLabel>
+          <NumberInput v-model="paymentItem.quantity" id="quantity" />
+        </div>
+        <div class="my-2">
           <InputLabel id="tax-rate">適用税率</InputLabel>
-          <Select v-model="paymentItem.taxRate" :options="taxRates" id="tax-rate" />
+          <Select :options="taxRates" id="tax-rate" @change="onSelectTaxRate(paymentItem.id, $event)" />
+        </div>
+        <div class="my-2">
+          <span>
+            合計(税込) ¥ {{ calculateCurrentTotal(paymentItem) }}
+          </span>
         </div>
       </Card>
       <Button @click="savePaymentItems">更新する</Button>

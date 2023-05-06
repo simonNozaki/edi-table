@@ -9,7 +9,7 @@ interface Props<T> {
 }
 
 interface Emits {
-  (e: 'select', v: Option): () => void
+  (e: 'select', id: number): () => void
 }
 
 const props = withDefaults(defineProps<Props<Option>>(), {
@@ -21,14 +21,14 @@ const emits = defineEmits<Emits>()
 const onChange = (e: any) => {
   const option = props.options.filter((o) => o.value === e.target.value).at(0)
   if (option) {
-    emits('select', option);
+    emits('select', option.id);
   }
 }
 </script>
 
 <template>
   <select @change="onChange">
-    <option v-for="option in props.options" :key="option.id">
+    <option v-for="option in props.options" :key="option.id" :value="option.id">
       {{ option.value }}
     </option>
   </select>
